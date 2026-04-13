@@ -54,14 +54,14 @@
 // └───────────────────────────────────────────────────────────┘
 
 // Import the layout that you use from the layouts folder
-#include "layouts/konrad/layout_konrad.cfg"
+#include "layouts/polydactyl/layout_polydactyl.cfg"
 
 // Import the keymap that you use from the layouts folder
-#include "layouts/konrad/keymap_konrad.h"
+#include "layouts/polydactyl/keymap_polydactyl.h"
 
 // Remember to change the layout name to the one you are using
 // e.g. LAYOUT_konrad to LAYOUT_polydactyl
-#define LAYOUT LAYOUT_konrad
+#define LAYOUT_CHOSEN LAYOUT_polydactyl
 
 
 // ┌───────────────────────────────────────────────────────────┐
@@ -259,19 +259,22 @@ int layerstate = 0;
 
 layer_state_t layer_state_set_kb(layer_state_t state) {
       switch (get_highest_layer(layer_state | default_layer_state)) {
-            case 0:
-                strcpy ( layer_state_str, "BASE COLEMAK");
-                break;
-            case 1:
+            case _QWERTY:
                 strcpy ( layer_state_str, "BASE QWERTY");
                 break;
-            case 2:
+            case _COLEMAK:
+                strcpy ( layer_state_str, "BASE COLEMAK");
+                break;
+            case _COLEMAK_DH:
+                strcpy ( layer_state_str, "BASE COLEMAK_DH");
+                break;
+            case _LOWER:
                 strcpy ( layer_state_str, "LOWER");
                 break;
-            case 3:
+            case _RAISE:
                 strcpy ( layer_state_str, "RAISE");
                 break;
-            case 4:
+            case _ADJUST:
                 strcpy ( layer_state_str, "ADJUST");
                 break;
             default:
@@ -388,7 +391,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
               #ifdef HAPTIC_ENABLE
                 DRV_pulse(pulsing_strong);
               #endif // HAPTIC_ENABLE
-            eeconfig_update_keymap(keymap_config.raw);
+            eeconfig_update_keymap(&keymap_config);
             clear_keyboard();  // ──── clear to prevent stuck keys
             return false;
           }
@@ -401,6 +404,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case COLEMAK:
             if (record->event.pressed) {
                 set_single_persistent_default_layer(_COLEMAK);
+                #ifdef HAPTIC_ENABLE
+                  DRV_pulse(transition_hum);
+                #endif // HAPTIC_ENABLE
+            }
+            return false;
+        case COLEMAK_DH:
+            if (record->event.pressed) {
+                set_single_persistent_default_layer(_COLEMAK_DH);
                 #ifdef HAPTIC_ENABLE
                   DRV_pulse(transition_hum);
                 #endif // HAPTIC_ENABLE
