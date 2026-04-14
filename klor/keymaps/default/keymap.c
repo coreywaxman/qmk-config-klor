@@ -268,6 +268,15 @@ layer_state_t layer_state_set_kb(layer_state_t state) {
             case _COLEMAK_DH:
                 strcpy ( layer_state_str, "BASE COLEMAK_DH");
                 break;
+            case _COLEMAK_DH2:
+                strcpy ( layer_state_str, "BASE COLEMAK_DH2");
+                break;
+            case _WORKMAN:
+                strcpy ( layer_state_str, "BASE WORKMAN");
+                break;
+            case _DVORAK:
+                strcpy ( layer_state_str, "BASE DVORAK");
+                break;
             case _LOWER:
                 strcpy ( layer_state_str, "LOWER");
                 break;
@@ -417,6 +426,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 #endif // HAPTIC_ENABLE
             }
             return false;
+        case COLEMAK_DH2:
+            if (record->event.pressed) {
+                set_single_persistent_default_layer(_COLEMAK_DH2);
+                #ifdef HAPTIC_ENABLE
+                  DRV_pulse(transition_hum);
+                #endif // HAPTIC_ENABLE
+            }
+            return false;
+        case WORKMAN:
+            if (record->event.pressed) {
+                set_single_persistent_default_layer(_WORKMAN);
+                #ifdef HAPTIC_ENABLE
+                  DRV_pulse(transition_hum);
+                #endif // HAPTIC_ENABLE
+            }
+            return false;
+        case DVORAK:
+            if (record->event.pressed) {
+                set_single_persistent_default_layer(_DVORAK);
+                #ifdef HAPTIC_ENABLE
+                  DRV_pulse(transition_hum);
+                #endif // HAPTIC_ENABLE
+            }
+            return false;
         case QWERTY:
             if (record->event.pressed) {
                 set_single_persistent_default_layer(_QWERTY);
@@ -486,39 +519,37 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // │ E N C O D E R                                                                                                                              │
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 // ▝▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▘
-
 #ifdef ENCODER_ENABLE
 
 // ┌───────────────────────────────────────────────────────────┐
-// │ e n c o d e r  L                                          │
+// │ e n c o d e r s                                           │
 // └───────────────────────────────────────────────────────────┘
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (index == 0) {
-        if (clockwise) {
-            tap_code(KC_VOLU);
-        } else {
-            tap_code(KC_VOLD);
+    if (IS_LAYER_ON(_ADJUST)) {
+        if (index == 0) {  // left side
+            tap_code(clockwise ? DT_UP : DT_DOWN);  // tap delay
+        } else {  // right side
+            // TODO: Assign
         }
-
-// ┌───────────────────────────────────────────────────────────┐
-// │ e n c o d e r  R                                          │
-// └───────────────────────────────────────────────────────────┘
-
-    } else if (index == 1) {
-      if(IS_LAYER_ON(_LOWER)){
-          if (clockwise) {
-              tap_code(KC_MNXT);
-          } else {
-              tap_code(KC_MPRV);
-          }
-      }else {
-            if (clockwise) {
-              tap_code(KC_VOLU);
-          } else {
-              tap_code(KC_VOLD);
-          }
-      }
+    } else if (IS_LAYER_ON(_RAISE)) {
+        if (index == 0) {  // left side
+            tap_code(clockwise ? KC_VOLU : KC_VOLD);
+        } else {  // right side
+            tap_code(clockwise ? KC_PGUP : KC_PGDN);
+        }
+    } else if (IS_LAYER_ON(_LOWER)) {
+        if (index == 0) {  // left side
+            // TODO: Map to left OLED brightness
+        } else {  // right side
+            // TODO: Map to right OLED brightness
+        }
+    } else {  // base layer
+        if (index == 0) {  // left side
+            tap_code(clockwise ? KC_RIGHT : KC_LEFT);
+        } else {  // right side
+            tap_code(clockwise ? KC_DOWN : KC_UP);
+        }
     }
     return true;
 }

@@ -25,6 +25,7 @@ for more options.
 //#define NO_ACTION_TAPPING
 //#define NO_MUSIC_MODE
 
+#define ENCODER_DIRECTION_FLIP
 #define COMBO_COUNT 1
 
 
