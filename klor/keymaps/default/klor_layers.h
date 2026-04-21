@@ -9,8 +9,8 @@ typedef enum {
     /* _M_XYZ = Mac Os, _W_XYZ = Win/Linux */
     _QWERTY,
     _COLEMAK,
-    _COLEMAK_DH,
-    _COLEMAK_DH2,
+    _CLMK_DH,
+    _CLMK_D2,
     _WORKMAN,
     _DVORAK,
     _LOWER,

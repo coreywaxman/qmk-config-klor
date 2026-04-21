@@ -11,8 +11,8 @@
 typedef enum {
     QWERTY = SAFE_RANGE,
     COLEMAK,
-    COLEMAK_DH,
-    COLEMAK_DH2,
+    CLMK_DH,
+    CLMK_D2,
     WORKMAN,
     DVORAK,
     LOWER,

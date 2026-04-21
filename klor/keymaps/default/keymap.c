@@ -263,13 +263,13 @@ layer_state_t layer_state_set_kb(layer_state_t state) {
                 strcpy ( layer_state_str, "BASE QWERTY");
                 break;
             case _COLEMAK:
-                strcpy ( layer_state_str, "BASE COLEMAK");
+                strcpy ( layer_state_str, "BASE COLEMAK/hrm");
                 break;
-            case _COLEMAK_DH:
-                strcpy ( layer_state_str, "BASE COLEMAK_DH");
+            case _CLMK_DH:
+                strcpy ( layer_state_str, "BASE COLEMAK-DH");
                 break;
-            case _COLEMAK_DH2:
-                strcpy ( layer_state_str, "BASE COLEMAK_DH2");
+            case _CLMK_D2:
+                strcpy ( layer_state_str, "BASE COLEMAK-DH/hrm");
                 break;
             case _WORKMAN:
                 strcpy ( layer_state_str, "BASE WORKMAN");
@@ -418,17 +418,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 #endif // HAPTIC_ENABLE
             }
             return false;
-        case COLEMAK_DH:
+        case CLMK_DH:
             if (record->event.pressed) {
-                set_single_persistent_default_layer(_COLEMAK_DH);
+                set_single_persistent_default_layer(_CLMK_DH);
                 #ifdef HAPTIC_ENABLE
                   DRV_pulse(transition_hum);
                 #endif // HAPTIC_ENABLE
             }
             return false;
-        case COLEMAK_DH2:
+        case CLMK_D2:
             if (record->event.pressed) {
-                set_single_persistent_default_layer(_COLEMAK_DH2);
+                set_single_persistent_default_layer(_CLMK_D2);
                 #ifdef HAPTIC_ENABLE
                   DRV_pulse(transition_hum);
                 #endif // HAPTIC_ENABLE
@@ -491,9 +491,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case MAKE_H:
           if (record->event.pressed) {
             #ifdef KEYBOARD_klor_kb2040
-              SEND_STRING ("qmk compile -kb klor/2040 -km default");
+              SEND_STRING ("qmk compile -kb klor -km default -e CONVERT_TO=rp2040_ce -c --compiledb");
             #else
-              SEND_STRING ("qmk compile -kb klor -km default");
+              SEND_STRING ("qmk compile -kb klor -km default -c --compiledb");
             #endif
             tap_code(KC_ENTER);
           }
@@ -528,7 +528,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (IS_LAYER_ON(_ADJUST)) {
         if (index == 0) {  // left side
-            tap_code(clockwise ? DT_UP : DT_DOWN);  // tap delay
+            tap_code16(clockwise ? DT_UP : DT_DOWN);  // tap delay
         } else {  // right side
             // TODO: Assign
         }
@@ -539,8 +539,10 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             tap_code(clockwise ? KC_PGUP : KC_PGDN);
         }
     } else if (IS_LAYER_ON(_LOWER)) {
+        // TODO: Write this
+        // const uint8_t current = oled_get_brightness();
         if (index == 0) {  // left side
-            // TODO: Map to left OLED brightness
+            // oled_set_brightness(oled_get_brightness+ ???)
         } else {  // right side
             // TODO: Map to right OLED brightness
         }

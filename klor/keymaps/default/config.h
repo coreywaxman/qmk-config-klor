@@ -5,6 +5,8 @@ see https://docs.qmk.fm/#/feature_split_keyboard?id=setting-handedness
 for more options.
 */
 
+#define KEYBOARD_klor_kb2040
+
 #define MASTER_LEFT
 // #define MASTER_RIGHT
 
@@ -27,7 +29,6 @@ for more options.
 
 #define ENCODER_DIRECTION_FLIP
 #define COMBO_COUNT 1
-
 
 // RGB matrix support
 #ifdef RGB_MATRIX_ENABLE
