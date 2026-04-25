@@ -1,104 +1,38 @@
-/*
-
-                                        █         █    █            ▄▄▄▀▀▀▀▀▀▄▄▄        █▀▀▀▀▀▀▀▀▀▀█
-                                        █        █     █          ▄▀            ▀▄      █          █
-                                        █       █      █        ▄▀                ▀▄    █          █
-                                        █      █       █        █                  █    █          █
-                                        █     █        █       █                    █   █          █
-                                        █    █         █       █                    █   █▄▄▄▄▄▄▄▄▄▄█
-                                        █   █ █        █       █                    █   █      █
-                                        █  █   █       █        █                  █    █       █
-                                        █ █     █      █        ▀▄                ▄▀    █        █
-                                        ██       █     █          ▀▄            ▄▀      █         █
-                                        █         █    █▄▄▄▄▄▄▄▄    ▀▀▀▄▄▄▄▄▄▀▀▀        █          █
-
-                                        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-                                        D E F A U L T
-
-*/
 #include "klor_layers.h"
+#include "transactions.h"
 #include <stdio.h>
 #include <string.h>
-#ifdef HAPTIC_ENABLE
-#include "drivers/haptic/DRV2605L.h"
-#endif //HAPTIC ENABLE
-
 
 // ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 // │ D E F I N I T I O N S                                                                                                                      │
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 // ▝▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▘
 
-
 // ┌───────────────────────────────────────────────────────────┐
 // │ d e f i n e   m a c r o n a m e s                         │
 // └───────────────────────────────────────────────────────────┘
-
-// LEFT HAND HOME ROW MODS ├───────────────────────────────────┐
-
-#define GUI_A MT(MOD_LGUI, KC_A)
-#define ALT_R MT(MOD_LALT, KC_R)
-#define CTL_S MT(MOD_LCTL, KC_S)
-#define SHT_T MT(MOD_LSFT, KC_T)
-
-// RIGHT HAND HOME ROW MODS ├───────────────────────────────────┐
-
-#define SHT_N MT(MOD_RSFT, KC_N)
-#define CTL_E MT(MOD_LCTL, KC_E)
-#define ALT_I MT(MOD_LALT, KC_I)
-#define GUI_O MT(MOD_LGUI, KC_O)
-
+// LEFT HAND HOME ROW MODS (numbered inner to outer) ├─────────────────────┐
+#define L1(kc) MT(MOD_LSFT, KC_##kc)
+#define L2(kc) MT(MOD_LCTL, KC_##kc)
+#define L3(kc) MT(MOD_LALT, KC_##kc)
+#define L4(kc) MT(MOD_LGUI, KC_##kc)
+// RIGHT HAND HOME ROW MODS (numbered inner to outer) ├────────────────────┐
+#define R1(kc) MT(MOD_RSFT, KC_##kc)
+#define R2(kc) MT(MOD_LCTL, KC_##kc)
+#define R3(kc) MT(MOD_LALT, KC_##kc)
+#define R4(kc) MT(MOD_LGUI, KC_##kc)
 
 // ┌───────────────────────────────────────────────────────────┐
 // │ l a y o u t  a n d  k e y m a p                           │
 // └───────────────────────────────────────────────────────────┘
-
-// Import the layout that you use from the layouts folder
-#include "layouts/polydactyl/layout_polydactyl.cfg"
-
-// Import the keymap that you use from the layouts folder
-#include "layouts/polydactyl/keymap_polydactyl.h"
-
-// Remember to change the layout name to the one you are using
-// e.g. LAYOUT_konrad to LAYOUT_polydactyl
-#define LAYOUT_CHOSEN LAYOUT_polydactyl
-
-
-// ┌───────────────────────────────────────────────────────────┐
-// │ d e f i n e   s o u n d s                                 │
-// └───────────────────────────────────────────────────────────┘
-
-#ifdef AUDIO_ENABLE
-  #define WINXP_SOUND W__NOTE(_DS6), Q__NOTE(_DS5), H__NOTE(_AS5), H__NOTE(_GS5), H__NOTE(_DS5), H__NOTE(_DS6), H__NOTE(_AS5)
-  #define MAC_SOUND S__NOTE(_CS5), B__NOTE(_C5)
-
-  float winxp_song[][2] = SONG(WINXP_SOUND);
-  float mac_song[][2] = SONG(MAC_SOUND);
-#endif // AUDIO_ENABLE
-
-
-
-// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-// │ H A P T I C   F E E D B A C K                                                                                                              │
-// └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-// ▝▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▘
-
-void keyboard_post_init_user(void) {
-  // Call the post init code.
-  #if HAPTIC_ENABLE
-    haptic_disable(); // disables per key haptic feedback by default
-  #endif //HAPTIC ENABLE
-}
-
+#include "layout.cfg"
+#include "keymap.h"
+#define LAYOUT_CHOSEN LAYOUT_USER
 
 // ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 // │ O L E D                                                                                                                                    │
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 // ▝▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▘
-
-#ifdef OLED_ENABLE
-
-
 // ┌───────────────────────────────────────────────────────────┐
 // │ d y n a m i c   m a c r o                                 │
 // └───────────────────────────────────────────────────────────┘
@@ -106,6 +40,13 @@ void keyboard_post_init_user(void) {
 char layer_state_str[24];
 char o_text[24] = "";
 int dmacro_num = 0;
+
+static uint8_t oled_brightness_master = OLED_BRIGHTNESS;
+static uint8_t oled_brightness_slave = OLED_BRIGHTNESS;
+static bool hrm_enable = false;
+// TODO: Make these persistent via EEPROM
+
+static bool oled_brightness_slave_updated = false;
 
 #ifdef DYNAMIC_MACRO_ENABLE
     char dmacro_text[4][24] = { "", "RECORDING", "STOP RECORDING",  "PLAY RECORDING"};
@@ -117,55 +58,50 @@ int dmacro_num = 0;
 
     // DYNMACRO RECORD ├─────────────────────────────────────────────────────────────┐
     void dynamic_macro_record_start_user(void) {
-          dmacro_num = 1;
+        dmacro_num = 1;
         return;
     }
 
     // DYNMACRO STOP RECORDING ├─────────────────────────────────────────────────────┐
     void dynamic_macro_record_end_user(int8_t direction) {
-          dmacro_num = 2;
-          dmacro_timer = timer_read();
+        dmacro_num = 2;
+        dmacro_timer = timer_read();
         return;
     }
 
     // DYNMACRO PLAY RECORDING ├─────────────────────────────────────────────────────┐
     void dynamic_macro_play_user(int8_t direction) {
-          dmacro_num = 3;
-          dmacro_timer = timer_read();
+        dmacro_num = 3;
+        dmacro_timer = timer_read();
         return;
     }
 #endif //DYNAMIC_MACRO_ENABLE
 
-
 void matrix_scan_user(void) {
-  #ifdef DYNAMIC_MACRO_ENABLE
+#ifdef DYNAMIC_MACRO_ENABLE
     // DynMacroTimer
     if(dmacro_num > 0){
         if (timer_elapsed(dmacro_timer) < 3000) {
             strcpy ( o_text, dmacro_text[dmacro_num] );
-          }
-        else {
+        } else {
             if (dmacro_num == 1) {
                 strcpy ( o_text, dmacro_text[1] );
-              }
-            else {
+            } else {
                 strcpy ( o_text, layer_state_str );
                 dmacro_num = 0;
-              }
-          }
-      }
-   #endif //DYNAMIC_MACRO_ENABLE
+            }
+        }
+    }
+#endif //DYNAMIC_MACRO_ENABLE
 }
-
 
 // ┌───────────────────────────────────────────────────────────┐
 // │ o l e d   g r a p h i c s                                 │
 // └───────────────────────────────────────────────────────────┘
-
 void render_os_lock_status(void) {
     static const char PROGMEM sep_v[] = {0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0};
     static const char PROGMEM sep_h1[] = {0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0};
-    static const char PROGMEM sep_h2[] = {0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0};
+    static const char PROGMEM sep_h2[] = {0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0xE1, 0};
     static const char PROGMEM face_1[] = {0x80, 0x81, 0x82, 0x83, 0x84, 0xE1, 0};
     static const char PROGMEM face_2[] = {0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xE1, 0};
     static const char PROGMEM os_m_1[] = {0x95, 0x96, 0};
@@ -175,138 +111,79 @@ void render_os_lock_status(void) {
     static const char PROGMEM s_lock[] = {0x8F, 0x90, 0};
     static const char PROGMEM n_lock[] = {0x91, 0x92, 0};
     static const char PROGMEM c_lock[] = {0x93, 0x94, 0};
+    static const char PROGMEM hrm_on[] = {0x9D, 0x9E, 0};
     static const char PROGMEM b_lock[] = {0xE1, 0xE1, 0};
-    #ifdef AUDIO_ENABLE
-      static const char PROGMEM aud_en[] = {0xAF, 0xB0, 0};
-      static const char PROGMEM aud_di[] = {0xCF, 0xD0, 0};
-    #endif
-    #ifdef HAPTIC_ENABLE
-      static const char PROGMEM hap_en[] = {0xB1, 0xB2, 0};
-    #endif
-
 // os mode status ────────────────────────────────────────┐
-
     oled_write_ln_P(sep_v, false);
-
-    if (keymap_config.swap_lctl_lgui) {
-        oled_write_P(os_m_1, false); // ──── MAC
-    } else {
-        oled_write_P(os_w_1, false); // ──── WIN
-    }
-
+    oled_write_P(keymap_config.swap_lctl_lgui ? os_m_1 : os_w_1, false);
     oled_write_P(sep_h1, false);
     oled_write_P(face_1, false);
-
-    if (keymap_config.swap_lctl_lgui) {
-        oled_write_P(os_m_2, false); // ──── MAC
-    } else {
-        oled_write_P(os_w_2, false); // ──── WIN
-    }
-
+    oled_write_P(keymap_config.swap_lctl_lgui ? os_m_2 : os_w_2, false);
     oled_write_P(sep_h1, false);
     oled_write_P(face_2, false);
     oled_write_ln_P(sep_v, false);
-
-
 // lock key layer status ─────────────────────────────────┐
-
     led_t led_usb_state = host_keyboard_led_state();
-
-    if (led_usb_state.num_lock) {
-        oled_write_P(n_lock, false); // ──── NUMLOCK
-    } else {
-        oled_write_P(b_lock, false);
-    }
-    if (led_usb_state.caps_lock) {
-        oled_write_P(c_lock, false); // ─── CAPSLOCK
-    } else {
-        oled_write_P(b_lock, false);
-    }
-    if (led_usb_state.scroll_lock) { // ─ SCROLLLOCK
-        oled_write_P(s_lock, false);
-    } else {
-        oled_write_P(b_lock, false);
-    }
-
-// hardware feature status ──────────────────────────────┐
-
+    oled_write_P(led_usb_state.num_lock ? n_lock : b_lock, false);
+    oled_write_P(led_usb_state.caps_lock ? c_lock : b_lock, false);
+    oled_write_P(led_usb_state.scroll_lock ? s_lock : b_lock, false);
+// custom status ─────────────────────────────────────────┐
     oled_write_P(sep_h2, false);
-
-    #ifndef AUDIO_ENABLE
-        oled_write_P(b_lock, false);
-    #endif
-    #ifndef HAPTIC_ENABLE
-        oled_write_P(b_lock, false);
-    #endif
-
-    #ifdef AUDIO_ENABLE // ────────────────── AUDIO
-        if (is_audio_on()) {
-          oled_write_P(aud_en, false);
-        } else {
-          oled_write_P(aud_di, false);
-        }
-    #endif // AUDIO ENABLE
-
-     #ifdef HAPTIC_ENABLE // ─────────────── HAPTIC
-        oled_write_P(hap_en, false);
-     #endif // HAPTIC ENABLE
+    oled_write_P(hrm_enable ? hrm_on : b_lock, false);
 }
 
-
 // layer status ──────────────────────────────────────────┐
-
 int layerstate = 0;
 
 layer_state_t layer_state_set_kb(layer_state_t state) {
-      switch (get_highest_layer(layer_state | default_layer_state)) {
-            case _QWERTY:
-                strcpy ( layer_state_str, "BASE QWERTY");
-                break;
-            case _COLEMAK:
-                strcpy ( layer_state_str, "BASE COLEMAK/hrm");
-                break;
-            case _CLMK_DH:
-                strcpy ( layer_state_str, "BASE COLEMAK-DH");
-                break;
-            case _CLMK_D2:
-                strcpy ( layer_state_str, "BASE COLEMAK-DH/hrm");
-                break;
-            case _WORKMAN:
-                strcpy ( layer_state_str, "BASE WORKMAN");
-                break;
-            case _DVORAK:
-                strcpy ( layer_state_str, "BASE DVORAK");
-                break;
-            case _LOWER:
-                strcpy ( layer_state_str, "LOWER");
-                break;
-            case _RAISE:
-                strcpy ( layer_state_str, "RAISE");
-                break;
-            case _ADJUST:
-                strcpy ( layer_state_str, "ADJUST");
-                break;
-            default:
-                strcpy ( layer_state_str, "XXXXXX");
-        }
-      if (dmacro_num < 1) {
-          strcpy ( o_text, layer_state_str );
+    state = update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+    if (get_highest_layer(state) > _MODBASE) {
+        state |= 1UL << _MODBASE;
+    } else {
+        state &= ~(1UL << _MODBASE);
     }
-  //return state;
-    return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+    switch (get_highest_layer(state | default_layer_state)) {
+        case _QWERTY:
+            strcpy ( layer_state_str, "BASE QWERTY");
+            break;
+        case _CLMK_DH:
+            strcpy ( layer_state_str, "BASE COLEMAK-DH");
+            break;
+        case _COLEMAK:
+            strcpy ( layer_state_str, "BASE COLEMAK");
+            break;
+        case _WORKMAN:
+            strcpy ( layer_state_str, "BASE WORKMAN");
+            break;
+        case _DVORAK:
+            strcpy ( layer_state_str, "BASE DVORAK");
+            break;
+        case _LOWER:
+            strcpy ( layer_state_str, "LOWER");
+            break;
+        case _RAISE:
+            strcpy ( layer_state_str, "RAISE");
+            break;
+        case _ADJUST:
+            strcpy ( layer_state_str, "ADJUST");
+            break;
+        default:
+            strcpy ( layer_state_str, "XXXXXX");
+    }
+    if (dmacro_num < 1) {
+        strcpy ( o_text, layer_state_str );
+    }
+    return state;
 }
-
 
 // ┌───────────────────────────────────────────────────────────┐
 // │ w r i t e   t o   o l e d                                 │
 // └───────────────────────────────────────────────────────────┘
-
 bool oled_task_kb(void) {
     if (!oled_task_user()) {
         return false;
     }
     if (is_keyboard_master()) {  // ────────────────────────── PRIMARY SIDE
-
         // layer status ──────────────────────────────────────────────────┐
         #ifdef DYNAMIC_MACRO_ENABLE
             if(dmacro_num == 1){ oled_write_P(rec_ico, false); }
@@ -316,11 +193,8 @@ bool oled_task_kb(void) {
 
         oled_write_ln(o_text, false);
         render_os_lock_status();
-
     } else {  // ─────────────────────────────────────────── SECONDARY SIDE
-
         // KLOR face ─────────────────────────────────────────────────────┐
-
         static const char PROGMEM klor_face[] = {
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0xf0, 0xf0, 0xf0, 0xf0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -359,224 +233,167 @@ bool oled_task_kb(void) {
     }
     return false;
 }
-#endif // OLED_ENABLE
-
-
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case SHT_T:
-            return TAPPING_TERM - 150;
-        case SHT_N:
-            return TAPPING_TERM - 150;
-        default:
-            return TAPPING_TERM;
+    if (IS_QK_MOD_TAP(keycode) && (QK_MOD_TAP_GET_MODS(keycode) & MOD_MASK_SHIFT)) {
+        return TAPPING_TERM - 150;  // resolve shift quickly
     }
+    return TAPPING_TERM;
 }
-
 
 // ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 // │ M A C R O S                                                                                                                                │
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 // ▝▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▘
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-
         case OS_SWAP:
             if (record->event.pressed) {
-                if (!keymap_config.swap_lctl_lgui) {
-                  keymap_config.swap_lctl_lgui = true;  // ─── MAC
-                  #ifdef AUDIO_ENABLE
-                    PLAY_SONG(mac_song);
-                  #endif // AUDIO_ENABLE
-                }
-                else {
-                  keymap_config.swap_lctl_lgui = false; // ─── WIN
-                  #ifdef AUDIO_ENABLE
-                    PLAY_SONG(winxp_song);
-                  #endif // AUDIO_ENABLE
-                }
-              #ifdef HAPTIC_ENABLE
-                DRV_pulse(pulsing_strong);
-              #endif // HAPTIC_ENABLE
-            eeconfig_update_keymap(&keymap_config);
-            clear_keyboard();  // ──── clear to prevent stuck keys
+                keymap_config.swap_lctl_lgui ^= true;
+                eeconfig_update_keymap(&keymap_config);
+                clear_keyboard();  // ──── clear to prevent stuck keys
+            }
             return false;
-          }
-
-
+        case BRT_S2M:
+            if (record->event.pressed) {
+                oled_brightness_master = oled_brightness_slave;
+                oled_set_brightness(oled_brightness_master);
+                return false;
+            }
+        case BRT_M2S:
+            if (record->event.pressed) {
+                oled_brightness_slave = oled_brightness_master;
+                oled_brightness_slave_updated = true;
+                return false;
+            }
+        case HRM_TGL:
+            if (record->event.pressed) {
+                hrm_enable ^= true;
+            }
+            return false;
+        case QK_MOD_TAP ... QK_MOD_TAP_MAX:
+            if (!hrm_enable) {
+                uint8_t kc = keycode & 0xFF;
+                if (record->event.pressed) {
+                    register_code(kc);
+                } else {
+                    unregister_code(kc);
+                }
+                return false;
+            }
+            return true;
 // ┌───────────────────────────────────────────────────────────┐
 // │ l a y e r                                                 │
 // └───────────────────────────────────────────────────────────┘
-
-        case COLEMAK:
-            if (record->event.pressed) {
-                set_single_persistent_default_layer(_COLEMAK);
-                #ifdef HAPTIC_ENABLE
-                  DRV_pulse(transition_hum);
-                #endif // HAPTIC_ENABLE
-            }
-            return false;
         case CLMK_DH:
             if (record->event.pressed) {
                 set_single_persistent_default_layer(_CLMK_DH);
-                #ifdef HAPTIC_ENABLE
-                  DRV_pulse(transition_hum);
-                #endif // HAPTIC_ENABLE
             }
             return false;
-        case CLMK_D2:
+        case COLEMAK:
             if (record->event.pressed) {
-                set_single_persistent_default_layer(_CLMK_D2);
-                #ifdef HAPTIC_ENABLE
-                  DRV_pulse(transition_hum);
-                #endif // HAPTIC_ENABLE
+                set_single_persistent_default_layer(_COLEMAK);
             }
             return false;
         case WORKMAN:
             if (record->event.pressed) {
                 set_single_persistent_default_layer(_WORKMAN);
-                #ifdef HAPTIC_ENABLE
-                  DRV_pulse(transition_hum);
-                #endif // HAPTIC_ENABLE
             }
             return false;
         case DVORAK:
             if (record->event.pressed) {
                 set_single_persistent_default_layer(_DVORAK);
-                #ifdef HAPTIC_ENABLE
-                  DRV_pulse(transition_hum);
-                #endif // HAPTIC_ENABLE
             }
             return false;
         case QWERTY:
             if (record->event.pressed) {
                 set_single_persistent_default_layer(_QWERTY);
-                #ifdef HAPTIC_ENABLE
-                  DRV_pulse(transition_hum);
-                #endif // HAPTIC_ENABLE
             }
             return false;
         case LOWER:
-            if (record->event.pressed) {
-                layer_on(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            } else {
-                layer_off(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            }
+            record->event.pressed ? layer_on(_LOWER) : layer_off(_LOWER);
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
             return false;
         case RAISE:
-            if (record->event.pressed) {
-                layer_on(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            } else {
-                layer_off(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            }
+            record->event.pressed ? layer_on(_RAISE) : layer_off(_RAISE);
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
             return false;
         case ADJUST:
-            if (record->event.pressed) {
-                layer_on(_ADJUST);
-            } else {
-                layer_off(_ADJUST);
-            }
+            record->event.pressed ? layer_on(_ADJUST) : layer_off(_ADJUST);
             return false;
-
 // ┌───────────────────────────────────────────────────────────┐
 // │ q m k                                                     │
 // └───────────────────────────────────────────────────────────┘
-
         case MAKE_H:
-          if (record->event.pressed) {
-            #ifdef KEYBOARD_klor_kb2040
+            if (record->event.pressed) {
               SEND_STRING ("qmk compile -kb klor -km default -e CONVERT_TO=rp2040_ce -c --compiledb");
-            #else
-              SEND_STRING ("qmk compile -kb klor -km default -c --compiledb");
-            #endif
-            tap_code(KC_ENTER);
-          }
-          break;
-
-// ┌───────────────────────────────────────────────────────────┐
-// │ p r o d u c t i v i t y                                   │
-// └───────────────────────────────────────────────────────────┘
-
-      case KC_MPLY:
-        if (record->event.pressed) {
-          #ifdef HAPTIC_ENABLE
-                  DRV_pulse(sharp_click);
-          #endif // HAPTIC_ENABL
-        }
-        break;
+              tap_code(KC_ENTER);
+            }
+            break;
     }
     return true;
 }
-
 
 // ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 // │ E N C O D E R                                                                                                                              │
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 // ▝▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▘
-#ifdef ENCODER_ENABLE
 
-// ┌───────────────────────────────────────────────────────────┐
-// │ e n c o d e r s                                           │
-// └───────────────────────────────────────────────────────────┘
-
-bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (IS_LAYER_ON(_ADJUST)) {
-        if (index == 0) {  // left side
-            tap_code16(clockwise ? DT_UP : DT_DOWN);  // tap delay
-        } else {  // right side
-            // TODO: Assign
-        }
-    } else if (IS_LAYER_ON(_RAISE)) {
-        if (index == 0) {  // left side
-            tap_code(clockwise ? KC_VOLU : KC_VOLD);
-        } else {  // right side
-            tap_code(clockwise ? KC_PGUP : KC_PGDN);
-        }
-    } else if (IS_LAYER_ON(_LOWER)) {
-        // TODO: Write this
-        // const uint8_t current = oled_get_brightness();
-        if (index == 0) {  // left side
-            // oled_set_brightness(oled_get_brightness+ ???)
-        } else {  // right side
-            // TODO: Map to right OLED brightness
-        }
-    } else {  // base layer
-        if (index == 0) {  // left side
-            tap_code(clockwise ? KC_RIGHT : KC_LEFT);
-        } else {  // right side
-            tap_code(clockwise ? KC_DOWN : KC_UP);
-        }
-    }
-    return true;
+void oled_brightness_slave_handler(uint8_t in_buflen, const void* in_data,
+                                   uint8_t out_buflen, void* out_data) {
+    oled_set_brightness(*(const uint8_t *)in_data);
 }
 
-#endif // ENCODER_ENABLE
+bool encoder_update_user(uint8_t index, bool clockwise) {
+    static const uint8_t INCR = 16;
+    static const uint8_t MAX = 255;
+    static const uint8_t MIN = MAX % INCR;
+    uint8_t* lvl;
+    switch (get_highest_layer(layer_state | default_layer_state)) {
+        case _ADJUST:
+            if (index == 0) {  // left side
+                tap_code16(clockwise ? DT_UP : DT_DOWN);  // tap delay
+            } else {  // right side
+                // TODO: Assign
+            }
+            break;
+        case _RAISE:
+            if (index == 0) {  // left side
+                tap_code(clockwise ? KC_VOLU : KC_VOLD);
+            } else {  // right side
+                tap_code(clockwise ? KC_PGUP : KC_PGDN);
+            }
+            break;
+        case _LOWER:
+            lvl = index == 0 ? &oled_brightness_master : &oled_brightness_slave;
+            if (clockwise) {
+                *lvl = *lvl > MAX - INCR ? MAX : *lvl + INCR;
+            } else {
+                *lvl = *lvl < MIN + INCR ? MIN : *lvl - INCR;
+            }
+            if (index == 0) {  // left side
+                oled_set_brightness(*lvl);
+            } else {  // right side
+                oled_brightness_slave_updated = true;
+            }
+            break;
+        default: // base layer
+            if (index == 0) {  // left side
+                tap_code16(clockwise ? KC_RIGHT : KC_LEFT);
+            } else {  // right side
+                tap_code16(clockwise ? KC_DOWN : KC_UP);
+            }
+    }
+    return false;
+}
 
+void keyboard_post_init_user(void) {
+    transaction_register_rpc(USER_SYNC_OLED_BRIGHTNESS, oled_brightness_slave_handler);
+}
 
-
-
-/*
-
-                                                       ▐█    ▟▛ ▐█     ▄▆▀▀▀▀▀▀▆▄  ▐█▀▀▀▀▀█▌
-                                                       ▐█   ▟▛  ▐█    ▟▛        ▜▙ ▐█     █▌
-                                                       ▐█  ▟▛   ▐█   ▐█          █▋▐█     █▌
-                                                       ▐█ ▟█▙   ▐█   ▐█          █▋▐█▀▀▜█▀▀▘
-                                                       ▐█▟▛ ▜▙  ▐█    ▜▙        ▟▛ ▐█   ▜▙
-                                                       ▐█▛   ▜▙ ▐█▄▄▄▄ ▀▜▆▄▄▄▄▆▛▀  ▐█    ▜▙
-
-                                                                 ▄██████████████▄
-                                                                 ████████████████
-                                                            ▄██████▀  ▀████▀  ▀██████▄
-                                                            ███████▄  ▄████▄  ▄███████
-                                                            ███████████▀▀▀▀███████████
-                                                            ▀█████████▀ ▄▄ ▀█████████▀
-                                                                 ████▀ ▄██▄ ▀████
-                                                                 ████▄▄████▄▄████
-
-*/
+void housekeeping_task_user(void) {
+    if (oled_brightness_slave_updated) {
+        transaction_rpc_send(USER_SYNC_OLED_BRIGHTNESS, sizeof(oled_brightness_slave), &oled_brightness_slave);
+        oled_brightness_slave_updated = false;
+    }
+}

@@ -8,14 +8,14 @@
 typedef enum {
     /* _M_XYZ = Mac Os, _W_XYZ = Win/Linux */
     _QWERTY,
-    _COLEMAK,
     _CLMK_DH,
-    _CLMK_D2,
+    _COLEMAK,
     _WORKMAN,
     _DVORAK,
+    _MODBASE,
     _LOWER,
     _RAISE,
-    _ADJUST,
+    _ADJUST
 } klor_layers;
 
 #endif

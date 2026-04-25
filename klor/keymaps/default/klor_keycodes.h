@@ -10,9 +10,8 @@
 
 typedef enum {
     QWERTY = SAFE_RANGE,
-    COLEMAK,
     CLMK_DH,
-    CLMK_D2,
+    COLEMAK,
     WORKMAN,
     DVORAK,
     LOWER,
@@ -20,6 +19,9 @@ typedef enum {
     ADJUST,
     OS_SWAP,
     MAKE_H,
+    BRT_S2M,
+    BRT_M2S,
+    HRM_TGL
 } custom_keycodes;
 
 #endif
